@@ -27,21 +27,26 @@ func parseDays(entry string) int {
 	return days
 }
 
+// add all input times together
 func addTimes(values []string) {
 	totalTime := time.Now()
 	for _, entry := range values {
 		entry = strings.ToLower(entry)
+
+		// if days were entered, process them separately from the hours
 		if strings.Contains(entry, "d") {
 			entrySlice := strings.Split(entry, "d")
 			days := parseDays(entrySlice[0])
+
 			totalTime = totalTime.AddDate(0, 0, days)
 			hours := parseHours(entrySlice[1])
 			totalTime = totalTime.Add(hours)
+
+		// add hours
 		} else {
-			if strings.Contains(entry, "h") {
 				duration := parseHours(entry)
 				totalTime = totalTime.Add(duration)
-			}
+
 		}
 	}
 
@@ -52,6 +57,8 @@ func addTimes(values []string) {
 func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	var vals []string
+
+	// read a series of inputs, append them to a slice
 	for {
 		fmt.Println("Enter the times one at a time in 0h0m format")
 		for scanner.Scan() {
@@ -63,7 +70,8 @@ func main() {
 
 			vals = append(vals, scanner.Text())
 		}
+
 		addTimes(vals)
-		vals = []string{}
+		vals = []string{} // clear slice to avoid constant time additions
 	}
 }
